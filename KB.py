@@ -13,7 +13,7 @@ class KB:
 
             tell_section = content[0].strip().replace("TELL", "").strip()
 
-            # Parse the queyr
+            # Parse the query
             self.query = content[1].strip()
 
             # Parse the TELL section
@@ -36,3 +36,15 @@ class KB:
             clause.display()
         print("Query:")
         print(self.query)
+
+    # Get all the propositional symbols
+    def get_all_symbols(self):
+        all_symbols = set()
+        all_symbols.update(self.facts)
+
+        for clause in self.clauses:
+            all_symbols.update(clause.get_symbols())
+
+        all_symbols.add(self.query)
+
+        return all_symbols

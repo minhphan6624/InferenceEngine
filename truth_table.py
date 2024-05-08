@@ -1,22 +1,61 @@
-from utils import *
-from utils_1 import *
+from KB import *
 
-def tt_entails(kb, alpha):
-    assert not variables(alpha)
-    symbols = list(prop_symbols(kb & alpha))
-    return tt_check_all(kb, alpha, symbols, {})
+from itertools import *
 
-def tt_check_all(kb, alpha, symbols, model):
-    """Auxiliary routine to implement tt_entails."""
-    if not symbols:
-        if pl_true(kb, model):
-            result = pl_true(alpha, model)
-            assert result in (True, False)
-            return result
-        else:
-            return True
-    else:
-        P, rest = symbols[0], symbols[1:]
-        return (tt_check_all(kb, alpha, rest, extend(model, P, True)) and
-                tt_check_all(kb, alpha, rest, extend(model, P, False)))
-    
+# Generate all possible models based on a list of prop symbols
+
+
+def generate_models(symbols):
+    return list(product([True, False], repeat=len(symbols)))
+
+# Truth-checking a fact in a model
+
+
+def evaluate_fact(fact, model={}):
+    return model.get(fact, False)
+
+# Truth-checking a Horn Clause in a model
+
+
+def evaluate_horn_clause(clause, model={}):
+
+    premise_true = all(model.get(premise, False)
+                       for premise in clause.premises)
+
+    conclusion_true = model.get(clause.conclusion, False)
+
+    # a => b <==> ~a v b
+    return not premise_true or conclusion_true
+
+# Check if the KB is true in a model
+
+
+def evaluate_kb(kb, model={}):
+    # Evaluate each fact
+    for fact in kb.facts:
+        if not evaluate_fact(fact, model):
+            return False  # Short-circuit if any fact is false
+
+    # Evaluate each clause
+    for clause in kb.clauses:
+        if not evaluate_horn_clause(clause, model):
+            return False  # Short-circuit if any clause is false
+
+
+def truth_table_check(kb, query):
+    symbols = kb.get_all_symbols()
+
+    models = generate_models(symbols)
+
+    entailed = True
+
+    for model in models:
+        symbol_model = dict(zip(symbols, model))
+
+        # Check for models where KB is true
+        if evaluate_kb(kb, symbol_model):
+            if not evaluate_fact(query):
+                entailed = False
+                break
+
+    return entailed

@@ -13,3 +13,11 @@ class HornClause:
     def display(self):
         print(', '.join(self.premises),
               "=>", self.conclusion)
+
+    # Get the propositional symbols in the clause:
+    def get_symbols(self):
+        symbols = set()
+        symbols.update(self.premises)
+        symbols.update(self.conclusion)
+
+        return symbols
