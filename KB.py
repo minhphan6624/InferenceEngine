@@ -1,22 +1,38 @@
 from horn_clause import *
 
+
 class KB:
-    def __init__(self, file_name):
+    def __init__(self):
         self.clauses = []
         self.facts = []
-        if file_name:
-                self.parse_input_file(file_name)
-
+        self.query = None
 
     def parse_input_file(self, file_name):
         with open(file_name, "r") as f:
-            f.readline() #First line only contains "TELL"
-        
-            tell_sentences = f.readline().strip().split(";")
+            content = f.read().split("ASK")
 
-            for sentence in tell_sentences:
-                sentence = sentence.replace(" ", "'") #Remove space inside a sentence
-                if sentence.find("=>"):
-                    self.clauses.append(HornClause(sentence))
-                else:
-                    self.facts.append(sentence)
+            tell_section = content[0].strip().replace("TELL", "").strip()
+
+            # Parse the queyr
+            self.query = content[1].strip()
+
+            # Parse the TELL section
+            sentences = tell_section.split(';')
+            for sentence in sentences:
+                sentence = sentence.strip()
+                if sentence:
+                    if "=>" in sentence:
+                        self.clauses.append(HornClause(sentence))
+                    else:
+                        self.facts.append(sentence)
+
+    def display(self):
+        print("Facts:")
+        for fact in self.facts:
+            print(fact)
+        print(len(self.facts))
+        print("Clauses:")
+        for clause in self.clauses:
+            clause.display()
+        print("Query:")
+        print(self.query)

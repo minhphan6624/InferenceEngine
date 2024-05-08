@@ -1,15 +1,15 @@
 class HornClause:
-    def __init__(self, sentence):
+    def __init__(self, clause):
+        self.premises = []
+        self.conclusion = None
+        self.parse_clause(clause)
 
-        split_by_entailment = sentence.split('=>')
-        split_by_and = split_by_entailment[0].split('&')
+    def parse_clause(self, clause):
+        parts = clause.split('=>')
+        self.conclusion = parts[1].strip()
+        self.premises = parts[0].strip().split('&')
 
-        self.premise = [literal.strip() for literal in split_by_and]
-        self.conclusion = split_by_entailment[1].strip()
-
-
-    def get_literals(self):
-        return self.premise
-
-
-
+    # Display function for debugging purposes
+    def display(self):
+        print(', '.join(self.premises),
+              "=>", self.conclusion)
