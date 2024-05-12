@@ -26,17 +26,6 @@ class KB:
                     else:
                         self.facts.append(sentence)
 
-    def display(self):
-        print("Facts:")
-        for fact in self.facts:
-            print(fact)
-        print(len(self.facts))
-        print("Clauses:")
-        for clause in self.clauses:
-            clause.display()
-        print("Query:")
-        print(self.query)
-
     # Get all the propositional symbols
     def get_all_symbols(self):
         all_symbols = set()
@@ -48,3 +37,14 @@ class KB:
         all_symbols.add(self.query)
 
         return all_symbols
+
+    def display(self):
+        print("Facts:")
+        for fact in self.facts:
+            print(fact)
+        print(len(self.facts))
+        print("Clauses:")
+        for clause in self.clauses:
+            clause.display()
+        print("Query:")
+        print(self.query)

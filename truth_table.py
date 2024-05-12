@@ -1,5 +1,4 @@
 from KB import *
-
 from itertools import *
 
 # Generate all possible models based on a list of prop symbols
@@ -43,19 +42,23 @@ def evaluate_kb(kb, model={}):
 
 
 def truth_table_check(kb, query):
+
     symbols = kb.get_all_symbols()
 
     models = generate_models(symbols)
 
-    entailed = True
+    entailed = False
+    count = 0
 
     for model in models:
         symbol_model = dict(zip(symbols, model))
 
         # Check for models where KB is true
         if evaluate_kb(kb, symbol_model):
+            count += 1
             if not evaluate_fact(query):
                 entailed = False
+                count -= 1
                 break
 
-    return entailed
+    return ("YES", count) if entailed else ("NO", count)

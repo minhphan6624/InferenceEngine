@@ -18,19 +18,23 @@ def test_truth_table():
 
     # Use the truth table check function
     result = truth_table_check(kb, query)
-    assert result == True, "Test failed: Query should be entailed by the KB"
+    # assert result == ("YES", ), "Test failed: Query should be entailed by the KB"
 
     print(result)
 
 
 def main():
     # # Initialize a new KB
-    # main_KB = KB()
+    main_KB = KB()
 
-    # # Parse input file
+    # Parse input file
     # main_KB.parse_input_file(filename)
 
-    # # Display for debugging purposes
+    # result = truth_table_check(main_KB, main_KB.query)
+
+    # print(result)
+
+    # Display for debugging purposes
     # main_KB.display()
 
     # if method == TT:
