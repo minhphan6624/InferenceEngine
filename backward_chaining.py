@@ -1,19 +1,31 @@
 from collections import defaultdict
 from KB import *
 
-def bc_entails(KB, query):
 
-    # {clause: number of prop symbols in its premise}
-    count = {clause : len(clause.premises) for clause in KB.clauses}
+def bc_entails(KB, query, inferred=None):
 
-    # Prop symbols known to be true
-    agenda = [query]
+    # Initialize inferred dictionary if not provided
+    if inferred is None:
+        inferred = defaultdict(bool)
 
-    #List of infered nodes (prop symbols), initially false
-    inferred = defaultdict(bool)
+    # Check if the query is already a known fact
+    if query in KB.facts:
+        return True
 
-    while agenda:
-        p = agenda.pop()
+    # Explore each clause in the KB to see if it can conclude the query
+    for clause in KB.clauses:
+        if clause.conclusion == query:
+            # All premises of the clause must be proven true
+            all_premises_proven = True
+            for premise in clause.premises:
+                if not inferred[premise]:
+                    # Recursively prove each premise; memoize the result
+                    if bc_entails(KB, premise, inferred):
+                        inferred[premise] = True
+                    else:
+                        all_premises_proven = False
+                        break
+            if all_premises_proven:
+                return True
 
-        
     return False

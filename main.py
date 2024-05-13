@@ -6,7 +6,7 @@ from forward_chaining import *
 from backward_chaining import *
 
 filename = sys.argv[1]
-# method = sys.argv[2]
+method = sys.argv[2]
 
 
 def test_truth_table():
@@ -17,7 +17,7 @@ def test_truth_table():
     query = 's'
 
     # Use the truth table check function
-    #result = truth_table_check(kb, query)
+    # result = truth_table_check(kb, query)
     result = fc_entails(kb, query)
 
     # assert result == ("YES", ), "Test failed: Query should be entailed by the KB"
@@ -26,23 +26,24 @@ def test_truth_table():
 
 
 def main():
-    # # Initialize a new KB
     main_KB = KB()
 
     # Parse input file
     main_KB.parse_input_file(filename)
 
-    # result = truth_table_check(main_KB, main_KB.query)
+    main_KB.display()
 
-    result = fc_entails(main_KB, main_KB.query)
+    if method == "FC":
+        result = fc_entails(main_KB, main_KB.query)
+    elif method == "BC":
+        result = bc_entails(main_KB, main_KB.query)
+    elif method == "TT":
+        result = "Not implemented"
+    else:
+        result = "Invalid method!"
 
     print(result)
-
-    # test_truth_table()
-
     # Display for debugging purposes
-    # main_KB.display()
-    
 
 
 if __name__ == "__main__":

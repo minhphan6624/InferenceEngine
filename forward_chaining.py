@@ -13,15 +13,20 @@ def fc_entails(KB, query):
     # List of infered nodes (prop symbols), initially false
     inferred = defaultdict(bool)
 
+    entailed_symbols = []
+    entailed_symbols = (KB.facts)
+
     while agenda:
         p = agenda.pop()
 
         # If the query is a fact, return true
         if p == query:
-            return True
+            entailed_symbols.append(p)
+            return True, entailed_symbols
 
         if not inferred[p]:
             inferred[p] = True
+            entailed_symbols.append(p)
 
             # Decrease the count of clauses whose premises include p
             for clause in KB.clauses:
@@ -30,4 +35,4 @@ def fc_entails(KB, query):
                     # If all symbols in a clause is true, the conclusion is also true
                     if count[clause] == 0:
                         agenda.append(clause.conclusion)
-    return False
+    return False, entailed_symbols
