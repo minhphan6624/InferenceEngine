@@ -17,7 +17,9 @@ def test_truth_table():
     query = 's'
 
     # Use the truth table check function
-    result = truth_table_check(kb, query)
+    #result = truth_table_check(kb, query)
+    result = fc_entails(kb, query)
+
     # assert result == ("YES", ), "Test failed: Query should be entailed by the KB"
 
     print(result)
@@ -28,19 +30,19 @@ def main():
     main_KB = KB()
 
     # Parse input file
-    # main_KB.parse_input_file(filename)
+    main_KB.parse_input_file(filename)
 
     # result = truth_table_check(main_KB, main_KB.query)
 
-    # print(result)
+    result = fc_entails(main_KB, main_KB.query)
+
+    print(result)
+
+    # test_truth_table()
 
     # Display for debugging purposes
     # main_KB.display()
-
-    # if method == TT:
-    #     pass
-
-    test_truth_table()
+    
 
 
 if __name__ == "__main__":

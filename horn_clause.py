@@ -9,11 +9,6 @@ class HornClause:
         self.conclusion = parts[1].strip()
         self.premises = parts[0].strip().split('&')
 
-    # Display function for debugging purposes
-    def display(self):
-        print(', '.join(self.premises),
-              "=>", self.conclusion)
-
     # Get premise
     def get_premises(self):
         return self.premises
@@ -29,3 +24,8 @@ class HornClause:
         symbols.update(self.conclusion)
 
         return symbols
+
+    # Display function for debugging purposes
+    def display(self):
+        print(', '.join(self.premises),
+              "=>", self.conclusion)
