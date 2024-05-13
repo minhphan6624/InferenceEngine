@@ -1,6 +1,5 @@
 from horn_clause import *
 
-
 class KB:
     def __init__(self):
         self.clauses = []
