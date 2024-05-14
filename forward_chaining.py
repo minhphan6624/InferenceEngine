@@ -13,8 +13,7 @@ def fc_entails(KB, query):
     # List of infered nodes (prop symbols), initially false
     inferred = defaultdict(bool)
 
-    entailed_symbols = []
-    entailed_symbols = (KB.facts)
+    entailed_symbols = KB.facts
 
     while agenda:
         p = agenda.pop()

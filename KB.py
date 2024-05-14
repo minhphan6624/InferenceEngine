@@ -1,5 +1,6 @@
 from horn_clause import *
 
+
 class KB:
     def __init__(self):
         self.clauses = []
@@ -28,6 +29,7 @@ class KB:
     # Get all the propositional symbols
     def get_all_symbols(self):
         all_symbols = set()
+
         all_symbols.update(self.facts)
 
         for clause in self.clauses:

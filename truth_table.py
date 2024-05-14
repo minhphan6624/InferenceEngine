@@ -58,7 +58,5 @@ def truth_table_check(kb, query):
             count += 1
             if not evaluate_fact(query):
                 entailed = False
-                count -= 1
-                break
 
     return ("YES", count) if entailed else ("NO", count)
