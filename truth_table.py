@@ -44,12 +44,11 @@ def evaluate_kb(kb, model={}):
 
 def truth_table_check(kb, query):
 
+    #Generate all symbols
     symbols = kb.get_all_symbols()
-    # print(symbols)
-    # print(len(symbols))
 
+    # Generate the models
     models = generate_models(symbols)
-    # print(len(models))
 
     entailed = True
     count = 0
@@ -60,6 +59,7 @@ def truth_table_check(kb, query):
         # Check for models where KB is true)
         if evaluate_kb(kb, symbol_model):
             count += 1
+            #If the query is not true in that model
             if not evaluate_fact(query, symbol_model):
                 entailed = False
 

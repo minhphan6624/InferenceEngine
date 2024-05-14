@@ -9,14 +9,6 @@ class HornClause:
         self.conclusion = parts[1].strip()
         self.premises = parts[0].strip().split('&')
 
-    # Get premise
-    def get_premises(self):
-        return self.premises
-
-    # Get conclusion
-    def get_conclusion(self):
-        return self.conclusion
-
     # Get all the propositional symbols in the clause:
     def get_symbols(self):
         symbols = set(self.premises)

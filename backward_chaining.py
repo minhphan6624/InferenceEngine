@@ -10,7 +10,8 @@ def bc_entails(KB, query, inferred=None):
 
     # Check if the query is already a known fact
     if query in KB.facts:
-        return True
+        inferred[query] = True
+        return True, list(inferred.keys())
 
     # Explore each clause in the KB to see if it can conclude the query
     for clause in KB.clauses:
@@ -27,6 +28,7 @@ def bc_entails(KB, query, inferred=None):
                         all_premises_proven = False
                         break
             if all_premises_proven:
-                return True
+                inferred[query] = True;
+                return True, list(inferred.keys())
 
-    return False
+    return False, list(inferred.keys())
