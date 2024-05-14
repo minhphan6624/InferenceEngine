@@ -1,6 +1,5 @@
 from horn_clause import *
 
-
 class KB:
     def __init__(self):
         self.clauses = []
@@ -33,7 +32,7 @@ class KB:
         for clause in self.clauses:
             all_symbols.update(clause.get_symbols())
 
-        all_symbols.add(self.query)
+        # all_symbols.add(self.query)
 
         return list(all_symbols)
 

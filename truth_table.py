@@ -44,14 +44,18 @@ def evaluate_kb(kb, model={}):
 
 def truth_table_check(kb, query):
 
+    entailed = True
+    count = 0
+
     #Generate all symbols
     symbols = kb.get_all_symbols()
 
+    #Handling edge cases where query is not a symbol included in KB
+    if query not in symbols:
+        return ("NO", count)
+    
     # Generate the models
     models = generate_models(symbols)
-
-    entailed = True
-    count = 0
 
     for model in models:
         symbol_model = dict(zip(symbols, model))

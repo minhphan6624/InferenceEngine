@@ -32,7 +32,10 @@ def main():
 
     elif method == "TT":
         result, models_count = truth_table_check(main_KB, main_KB.query)
-        print(result + ":", models_count)
+        if result == "NO":
+            print(result)
+        else:
+            print (result + ":", models_count)
 
     else:
         print("Invalid method!")
