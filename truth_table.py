@@ -2,20 +2,14 @@ from KB import *
 from itertools import *
 
 # Generate all possible models based on a list of prop symbols
-
-
 def generate_models(symbols):
     return list(product([True, False], repeat=len(symbols)))
 
 # Truth-checking a fact in a model
-
-
 def evaluate_fact(fact, model={}):
     return model.get(fact, False)
 
 # Truth-checking a Horn Clause in a model
-
-
 def evaluate_horn_clause(clause, model={}):
     premise_true = all(model.get(premise, False)
                        for premise in clause.premises)
@@ -26,8 +20,6 @@ def evaluate_horn_clause(clause, model={}):
     return (not premise_true) or conclusion_true
 
 # Check if the KB is true in a model
-
-
 def evaluate_kb(kb, model={}):
     # Evaluate each fact
     for fact in kb.facts:
@@ -41,7 +33,7 @@ def evaluate_kb(kb, model={}):
 
     return True
 
-
+# Main evaluation function
 def truth_table_check(kb, query):
 
     entailed = True
