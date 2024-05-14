@@ -9,13 +9,17 @@ filename = sys.argv[1]
 method = sys.argv[2]
 
 
-def test_truth_table():
+def test_truth_table(filename):
     kb = KB()
-    kb.clauses = [HornClause("p&q=>r"), HornClause("r=>s")]
-    kb.facts = ['p', 'q']
-    query = 's'
+    # kb.clauses = [HornClause("p&q=>r"), HornClause("r=>s")]
+    # kb.facts = ['p', 'q']
+    # query = 's'
 
-    result = truth_table_check(kb, query)
+    kb.parse_input_file(filename)
+
+    kb.display()
+
+    result = truth_table_check(kb, kb.query)
     # result = fc_entails(kb, query)
 
     print(result)
@@ -34,7 +38,7 @@ def main():
     elif method == "BC":
         result = bc_entails(main_KB, main_KB.query)
     elif method == "TT":
-        result = test_truth_table()
+        result = test_truth_table(filename)
     else:
         result = "Invalid method!"
 

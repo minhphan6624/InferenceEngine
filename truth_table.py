@@ -18,13 +18,23 @@ def evaluate_fact(fact, model={}):
 
 def evaluate_horn_clause(clause, model={}):
 
-    premise_true = all(model.get(premise, False)
-                       for premise in clause.premises)
+    clause.display()
+    bool_premise = []
+
+    for premise in clause.premises:
+        print(premise)
+        bool_premise.append(model.get(premise, False))
+
+    print(bool_premise)
+
+    premise_true = all(bool_premise)
 
     conclusion_true = model.get(clause.conclusion, False)
+    print(clause.conclusion)
+    print(conclusion_true)
 
     # a => b <==> ~a v b
-    return not premise_true or conclusion_true
+    return (not premise_true) or conclusion_true
 
 # Check if the KB is true in a model
 
@@ -46,12 +56,15 @@ def truth_table_check(kb, query):
     symbols = kb.get_all_symbols()
 
     models = generate_models(symbols)
+    #print(models)
+    #print(len(models))
 
     entailed = False
     count = 0
 
     for model in models:
         symbol_model = dict(zip(symbols, model))
+        # print(symbol_model)
 
         # Check for models where KB is true
         if evaluate_kb(kb, symbol_model):
