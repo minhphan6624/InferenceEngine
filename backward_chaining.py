@@ -17,6 +17,7 @@ def bc_entails(KB, query, inferred=None):
         if clause.conclusion == query:
             # All premises of the clause must be proven true
             all_premises_proven = True
+
             for premise in clause.premises:
                 if not inferred[premise]:
                     # Recursively prove each premise; memoize the result

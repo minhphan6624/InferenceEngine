@@ -28,16 +28,14 @@ class KB:
 
     # Get all the propositional symbols
     def get_all_symbols(self):
-        all_symbols = set()
-
-        all_symbols.update(self.facts)
+        all_symbols = set(self.facts)
 
         for clause in self.clauses:
             all_symbols.update(clause.get_symbols())
 
         all_symbols.add(self.query)
 
-        return all_symbols
+        return list(all_symbols)
 
     def display(self):
         print("Facts:")

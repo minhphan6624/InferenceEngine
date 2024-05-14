@@ -17,7 +17,7 @@ def test_truth_table(filename):
 
     kb.parse_input_file(filename)
 
-    kb.display()
+    # kb.display()
 
     result = truth_table_check(kb, kb.query)
     # result = fc_entails(kb, query)
