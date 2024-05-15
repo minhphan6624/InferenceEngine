@@ -1,5 +1,6 @@
-from KB import *
+from HornKB import *
 from itertools import *
+import re
 
 # Generate all possible models based on a list of prop symbols
 def generate_models(symbols):
@@ -20,7 +21,7 @@ def evaluate_horn_clause(clause, model={}):
     return (not premise_true) or conclusion_true
 
 # Check if the KB is true in a model
-def evaluate_kb(kb, model={}):
+def evaluate_hornkb(kb, model={}):
     # Evaluate each fact
     for fact in kb.facts:
         if not evaluate_fact(fact, model):
@@ -33,14 +34,14 @@ def evaluate_kb(kb, model={}):
 
     return True
 
-# Main evaluation function
-def truth_table_check(kb, query):
+# Main evaluation function for Horn KB
+def truth_table_check_hornkb(kb, query):
 
     entailed = True
     count = 0
 
     #Generate all symbols
-    symbols = kb.get_all_symbols()
+    symbols = kb.get_all_symbols_hornkb()
 
     #Handling edge cases where query is not a symbol included in KB
     if query not in symbols:
@@ -53,10 +54,46 @@ def truth_table_check(kb, query):
         symbol_model = dict(zip(symbols, model))
 
         # Check for models where KB is true)
-        if evaluate_kb(kb, symbol_model):
+        if evaluate_hornkb(kb, symbol_model):
             count += 1
             #If the query is not true in that model
             if not evaluate_fact(query, symbol_model):
+                entailed = False
+
+    return ("YES", count) if entailed else ("NO", count)
+
+# --------------- Generic KB ---------------------
+
+def evaluate_generic_sentences(sentence, model={}):
+    return sentence.evaluate(model)
+
+def evaluate_generic_kb(kb, model={}):
+    for fact in kb.facts:
+        if not evaluate_fact(fact, model):
+            return False
+        
+    for sentence in kb.generic_sentences:
+        if not evaluate_generic_sentences(sentence, model):
+            return False
+        
+    return True
+
+def truth_table_check_generickb(kb, query):
+    entailed = True
+    count = True
+
+    #Get all prop symbols from a KB
+    symbols = kb.get_all_symbols()
+
+    #Generate all models
+    models = generate_models(symbols)
+
+    for model in models:
+        symbol_model = dict(zip(symbols, models))
+
+        if evaluate_generic_kb(kb, symbol_model):
+            count+=1
+            if not evaluate_generic_sentences(query, symbol_model):
                 entailed = False
 
     return ("YES", count) if entailed else ("NO", count)

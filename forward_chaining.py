@@ -1,5 +1,5 @@
 from collections import defaultdict
-from KB import *
+from HornKB import *
 
 
 def fc_entails(KB, query):

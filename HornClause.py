@@ -12,7 +12,7 @@ class HornClause:
     # Get all the propositional symbols in the clause:
     def get_symbols(self):
         symbols = set(self.premises)
-        symbols.add(self.conclusion)
+        symbols.add(self.conclusion.strip)
         return symbols
 
     # Display function for debugging purposes
