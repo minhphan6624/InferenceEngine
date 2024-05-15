@@ -1,5 +1,5 @@
 from HornClause import *
-from generic_sentence import *
+from GenericSentence import *
 import re
 
 class HornKB:

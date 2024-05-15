@@ -36,12 +36,11 @@ def evaluate_hornkb(kb, model={}):
 
 # Main evaluation function for Horn KB
 def truth_table_check_hornkb(kb, query):
-
     entailed = True
     count = 0
 
     #Generate all symbols
-    symbols = kb.get_all_symbols_hornkb()
+    symbols = kb.get_all_symbols()
 
     #Handling edge cases where query is not a symbol included in KB
     if query not in symbols:

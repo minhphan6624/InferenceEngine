@@ -55,29 +55,41 @@ def main():
 
     kb.display()
 
-    if method == "FC":
-        result, prop_list = fc_entails(kb, kb.query)
-        if result:
-            print("YES:" , ", ".join(prop_list))
-        else:
-            print("NO")
+    if isinstance(kb, HornKB):
+        if method == "FC":
+            result, prop_list = fc_entails(kb, kb.query)
+            if result:
+                print("YES:" , ", ".join(prop_list))
+            else:
+                print("NO")
 
-    elif method == "BC":
-        result, prop_list = bc_entails(kb, kb.query)
-        if result:
-            print("YES:" , ", ".join(prop_list))
-        else:
-            print("NO")
+        elif method == "BC":
+            result, prop_list = bc_entails(kb, kb.query)
+            if result:
+                print("YES:" , ", ".join(prop_list))
+            else:
+                print("NO")
 
-    elif method == "TT":
-        result, models_count = truth_table_check_generickb(kb, kb.query)
-        if result == "NO":
-            print(result)
-        else:
-            print (result + ":", models_count)
+        elif method == "TT":
+            result, models_count = truth_table_check_hornkb(kb, kb.query)
+            if result == "NO":
+                print(result)
+            else:
+                print (result + ":", models_count)
 
+        else:
+            print("Invalid method!")
     else:
-        print("Invalid method!")
+        if method == "TT":
+            print("Not implemented")
+            # result, models_count = truth_table_check_generickb(kb, kb.query)
+            # if result == "NO":
+            #     print(result)
+            # else:
+            #     print (result + ":", models_count)
+
+        else:
+            print("Invalid method!")
 
 
 if __name__ == "__main__":

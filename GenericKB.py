@@ -1,4 +1,4 @@
-from generic_sentence import *
+from GenericSentence import *
 import re
 
 class GenericKB:
@@ -31,3 +31,16 @@ class GenericKB:
             symbols.add(self.query)
 
         return list(symbols)
+    
+    def display(self):
+        print("Facts:")
+        for fact in self.facts:
+            print(f"{fact}")
+        print("\nGeneric Sentences:")
+        for sentence in self.generic_sentences:
+            sentence.display()
+        print("Query:")
+        if isinstance(self.query, str):
+            print(self.query)
+        else:
+            self.query.display()
