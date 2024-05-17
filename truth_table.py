@@ -47,8 +47,8 @@ def truth_table_check_hornkb(kb, query):
         return ("NO", count)
     
     # Generate the models
+    i = 0
     models = generate_models(symbols)
-
     for model in models:
         symbol_model = dict(zip(symbols, model))
 
@@ -63,15 +63,20 @@ def truth_table_check_hornkb(kb, query):
 
 # --------------- Generic KB ---------------------
 
+# Check truth value of a generic sentence
 def evaluate_generic_sentences(sentence, model={}):
     return sentence.evaluate(model)
 
+# Check truth value of a generic KB
 def evaluate_generic_kb(kb, model={}):
     for fact in kb.facts:
         if not evaluate_fact(fact, model):
             return False
-        
+    i = 0
     for sentence in kb.generic_sentences:
+        # sentence.display()
+        i+=1
+        print(evaluate_generic_sentences(sentence, model), i)
         if not evaluate_generic_sentences(sentence, model):
             return False
         
@@ -79,17 +84,19 @@ def evaluate_generic_kb(kb, model={}):
 
 def truth_table_check_generickb(kb, query):
     entailed = True
-    count = True
+    count = 0
 
     #Get all prop symbols from a KB
     symbols = kb.get_all_symbols()
+    # print(symbols)
 
     #Generate all models
     models = generate_models(symbols)
-
+    # print(models)
+    # print(len(models))
     for model in models:
-        symbol_model = dict(zip(symbols, models))
-
+        symbol_model = dict(zip(symbols, model))
+        # print(symbol_model, evaluate_generic_kb(kb, symbol_model))
         if evaluate_generic_kb(kb, symbol_model):
             count+=1
             if not evaluate_generic_sentences(query, symbol_model):

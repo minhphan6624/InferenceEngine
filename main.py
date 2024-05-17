@@ -15,15 +15,6 @@ def parse_input_file(input):
         tell_section = content[0].strip().replace("TELL", "").strip() # TELL section
         query = content[1].strip() #Query
 
-        # if re.search(r'[<=>|~()]', tell_section) or re.search(r'[<=>|~()]', query):
-        #     kb = GenericKB()
-        # else:
-        #     kb = HornKB()
-
-        # sentences = tell_section.split(';')
-        # kb.parse_input(sentences, query)
-        # return kb
-
         horn_clause_pattern = r'\w+(\s*&\s*\w+)*\s*=>\s*\w+'
         generic_operator_pattern = r'[<=>|~()]'
         
@@ -81,12 +72,12 @@ def main():
             print("Invalid method!")
     else:
         if method == "TT":
-            print("Not implemented")
-            # result, models_count = truth_table_check_generickb(kb, kb.query)
-            # if result == "NO":
-            #     print(result)
-            # else:
-            #     print (result + ":", models_count)
+            # print("Not implemented")
+            result, models_count = truth_table_check_generickb(kb, kb.query)
+            if result == "NO":
+                print(result)
+            else:
+                print (result + ":", models_count)
 
         else:
             print("Invalid method!")

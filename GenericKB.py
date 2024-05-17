@@ -25,6 +25,7 @@ class GenericKB:
 
         for sentence in self.generic_sentences:
             symbols.update(re.findall(r'\b\w+\b', sentence.original))
+            
         if isinstance(self.query, GenericSentence):
             symbols.update(re.findall(r'\b\w+\b', self.query.original))
         else:

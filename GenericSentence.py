@@ -2,37 +2,10 @@ import re
 
 class GenericSentence:
     def __init__(self, sentence):
-        self.original = sentence
-        self.lhs = None
-        self.rhs = None
-        self.parse_sentence(sentence)
-
-    def parse_sentence(self, sentence):
-        # Check if the sentence is a biconditional (contains '<=>')
-        if '<=>' in sentence:
-            parts = sentence.split('<=>')
-            self.lhs = parts[0].strip()  # Left-hand side (lhs)
-            self.rhs = parts[1].strip()  # Right-hand side (rhs)
-        elif '=>' in sentence:
-            parts = sentence.split('=>')
-            self.lhs = parts[0].strip()  # Left-hand side (lhs)
-            self.rhs = parts[1].strip()  # Right-hand side (rhs)
-        else:
-            self.lhs = sentence.strip()  # No implication or biconditional, treat entire sentence as lhs
+        self.original = sentence.strip()
 
     def evaluate(self, model):
-        # Evaluate the sentence in the given model
-        if self.rhs:
-            # If it's an implication or biconditional, evaluate lhs and rhs
-            lhs_value = self.evaluate_expression(self.lhs, model)
-            rhs_value = self.evaluate_expression(self.rhs, model)
-            if '<=>' in self.original:
-                return lhs_value == rhs_value  # Biconditional (lhs <=> rhs)
-            else:
-                return not lhs_value or rhs_value  # Implication (lhs => rhs)
-        else:
-            # If it's not an implication or biconditional, evaluate lhs only
-            return self.evaluate_expression(self.lhs, model)
+        return self.evaluate_expression(self.original, model)
 
     def evaluate_expression(self, expression, model):
         # Handle parentheses by evaluating subexpressions recursively
@@ -48,9 +21,9 @@ class GenericSentence:
         # Check for initial negation
         if terms[0] == '~':
             if terms[1] == 'True':
-                result = True
-            if terms[1] == 'False':
                 result = False
+            if terms[1] == 'False':
+                result = True
             else:
                 result = not model.get(terms[0], False)
             terms = terms[2:] #Skip over the negated term and its operator
@@ -100,8 +73,5 @@ class GenericSentence:
     
     def display(self):
         print(f"Original: {self.original}")
-        print(f"LHS: {self.lhs}")
-        if self.rhs:
-            print(f"RHS: {self.rhs}")
         print()
     
