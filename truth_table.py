@@ -24,6 +24,8 @@ def evaluate_horn_clause(clause, model={}):
     conclusion_true = model.get(clause.conclusion, False)
 
     # a => b <==> ~a v b
+    clause.display()
+    print((not premise_true) or conclusion_true)
     return (not premise_true) or conclusion_true
 
 # Check if the KB is true in a model
@@ -31,9 +33,10 @@ def evaluate_horn_clause(clause, model={}):
 
 def evaluate_hornkb(kb, model={}):
     # Evaluate each fact
-    for fact in kb.facts:
-        if not evaluate_fact(fact, model):
-            return False  # Short-circuit if any fact is false
+    if kb.facts:
+        for fact in kb.facts:
+            if not evaluate_fact(fact, model):
+                return False  # Short-circuit if any fact is false
 
     # Evaluate each clause
     for clause in kb.clauses:
@@ -63,9 +66,11 @@ def truth_table_check_hornkb(kb, query):
 
         # Check for models where KB is true)
         if evaluate_hornkb(kb, symbol_model):
+            print(symbol_model, "KB TRUE")
             count += 1
             # If the query is not true in that model
             if not evaluate_fact(query, symbol_model):
+                print("query not true")
                 entailed = False
 
     return ("YES", count) if entailed else ("NO", count)
@@ -85,8 +90,18 @@ def evaluate_generic_kb(kb, model={}):
     for fact in kb.facts:
         if not evaluate_fact(fact, model):
             return False
+
     for sentence in kb.generic_sentences:
-        if not evaluate_generic_sentences(sentence, model):
+
+        tokenizer = Tokenizer(sentence.original)
+        tokens = tokenizer.tokenize()
+        rpn = shunting_yard(tokens)
+
+        # print(rpn)
+
+        # print(evaluate_rpn(rpn, model))
+
+        if not evaluate_rpn(rpn, model):
             return False
 
     return True
@@ -98,18 +113,32 @@ def truth_table_check_generickb(kb, query):
 
     # Get all prop symbols from a KB
     symbols = kb.get_all_symbols()
-    # print(symbols)
+
+    if isinstance(query, GenericSentence):
+        if not query.get_symbols().issubset(symbols):
+            return ("NO", count)
+    else:
+        if query not in symbols:
+            return ("NO", count)
 
     # Generate all models
     models = generate_models(symbols)
-    # print(models)
-    print(len(models))
+
     for model in models:
         symbol_model = dict(zip(symbols, model))
-        # print(symbol_model, evaluate_generic_kb(kb, symbol_model))
+
+        # If the kb is true in a model
         if evaluate_generic_kb(kb, symbol_model):
             count += 1
-            if not evaluate_generic_sentences(query, symbol_model):
-                entailed = False
+            # Check if the query is also true
+            if isinstance(query, GenericSentence):
+                query_tokenizer = Tokenizer(query.original)
+                tokens = query_tokenizer.tokenize()
+                rpn = shunting_yard(tokens)
+                if not evaluate_rpn(rpn, symbol_model):
+                    entailed = False
+            else:
+                if not evaluate_fact(query, symbol_model):
+                    entailed = False
 
     return ("YES", count) if entailed else ("NO", count)

@@ -23,7 +23,7 @@ def parse_input_file(input):
     # Assume it's a Horn KB until proven otherwise
     is_horn = True
 
-    # Check for the presence of Horn clauses in tell_section
+    # Check for the presence of generic sentences in tell_section
     sentences = tell_section.split(';')
     for sentence in sentences:
         sentence = sentence.strip()
@@ -45,6 +45,7 @@ def main():
     with open(filename, 'r') as file:
         input_str = file.read()
 
+    # Parse input to KB
     kb = parse_input_file(input_str)
 
     kb.display()
@@ -75,13 +76,11 @@ def main():
             print("Invalid method!")
     else:
         if method == "TT":
-            print("Not implemented")
-            # result, models_count = truth_table_check_generickb(kb, kb.query)
-            # if result == "NO":
-            #     print(result)
-            # else:
-            #     print(result + ":", models_count)
-
+            result, models_count = truth_table_check_generickb(kb, kb.query)
+            if result == "NO":
+                print(result)
+            else:
+                print(result + ":", models_count)
         else:
             print("Invalid method!")
 

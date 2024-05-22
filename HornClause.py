@@ -4,6 +4,7 @@ class HornClause:
         self.conclusion = None
         self.parse_clause(clause)
 
+    # Parse the premise and conclusion of a Horn Clause
     def parse_clause(self, clause):
         parts = clause.split('=>')
         self.conclusion = parts[1].strip()
@@ -16,7 +17,6 @@ class HornClause:
         return symbols
 
     # Display function for debugging purposes
-
     def display(self):
         print(', '.join(self.premises),
               "=>", self.conclusion)
