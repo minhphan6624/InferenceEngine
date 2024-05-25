@@ -1,7 +1,6 @@
 from collections import defaultdict
 from HornKB import *
 
-
 def bc_entails(KB, query, inferred=None):
 
     # Initialize inferred dictionary if not provided
@@ -22,13 +21,15 @@ def bc_entails(KB, query, inferred=None):
             for premise in clause.premises:
                 if not inferred[premise]:
                     # Recursively prove each premise; memoize the result
-                    if bc_entails(KB, premise, inferred):
+                    result, _ = bc_entails(KB, premise, inferred)
+                    if result:
                         inferred[premise] = True
                     else:
                         all_premises_proven = False
                         break
+
             if all_premises_proven:
-                inferred[query] = True;
+                inferred[query] = True
                 return True, list(inferred.keys())
 
     return False, list(inferred.keys())
