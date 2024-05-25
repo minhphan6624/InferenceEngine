@@ -155,7 +155,6 @@ def evaluate_generic_sentence(sentence, model={}):
 
     # Get the list of tokens of the sentence
     tokens = tokenizer.tokenize()
-    print(tokens)
 
     # Convert tokens into RPN
     rpn = shunting_yard(tokens)

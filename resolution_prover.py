@@ -1,118 +1,71 @@
+from sympy import symbols, Or, And, Not, Implies, Equivalent, to_cnf
 from Tokenizer import *
 from GenericSentence import *
-
-# Eliminate implications and biconditionals
-
-
-# def eliminate_implications(tokens):
-#     new_tokens = []
-#     i = 0
-#     while (i < len(tokens)):
-#         token = tokens[i]
-
-#         # Implications: a => b becomes ~(a || b)
-#         if token == "=>":
-#             new_tokens.append("~")
-#             new_tokens.append(tokens[i-1])
-#             new_tokens.append("||")
-#             new_tokens.append(tokens[i+1])
-#         # Biconditionals: A <=> B becomes (~A || B) & (~B || A)
-#         elif token == "<=>":
-#             converted = ['(', '~', tokens[i-1], '||', tokens[i+1], ')',
-#                          '&', '(', '~', tokens[i+1], '||', tokens[i-1], ')']
-#             new_tokens.extend(converted)
-#         else:
-#             new_tokens.append(token)
-
-#         i += 1
-
-#     return new_tokens
-
-# def eliminate_implications(tokens):
-#     new_tokens = []
-#     i = 0
-#     while i < len(tokens):
-#         token = tokens[i]
-#         if token == "=>":
-#             # Start by adding the negation and a parenthesis to handle complex left-hand expressions
-#             new_tokens.extend(['~', '('])
-#             # Include all tokens that make up the left-hand side expression
-#             lhs_start = i - 1
-#             while lhs_start > 0 and not is_operator(tokens[lhs_start - 1]):
-#                 lhs_start -= 1
-#             new_tokens.extend(tokens[lhs_start:i])
-#             new_tokens.append(')')
-#             new_tokens.append('||')
-#             # Now handle the right-hand side expression
-#             rhs_end = i + 2
-#             while rhs_end < len(tokens) and not is_operator(tokens[rhs_end]):
-#                 rhs_end += 1
-#             new_tokens.extend(tokens[i+1:rhs_end])
-#         elif token == "<=>":
-#             # Biconditionals handled similarly with adjustments for both directions
-#             lhs_start = i - 1
-#             rhs_end = i + 2
-#             while lhs_start > 0 and not is_operator(tokens[lhs_start - 1]):
-#                 lhs_start -= 1
-#             while rhs_end < len(tokens) and not is_operator(tokens[rhs_end]):
-#                 rhs_end += 1
-#             lhs = tokens[lhs_start:i]
-#             rhs = tokens[i+1:rhs_end]
-#             converted = ['(', '~'] + lhs + ['||'] + rhs + [')', '&&', '(', '~'] + rhs + ['||'] + lhs + [')']
-#             new_tokens.extend(converted)
-#         else:
-#             new_tokens.append(token)
-#         i = rhs_end if token in ["=>", "<=>"] else i + 1
-
-#     return new_tokens
-
-# def is_operator(token):
-#     return token in ['&&', '||', '~', '=>', '<=>']
-
-def eliminate_implications(tokens):
-    if not tokens:
-        return []
-    if '=>' in tokens:
-        return handle_implication(tokens, '=>', lambda l, r: ['~'] + ['('] + l + [')'] + ['||'] + r)
-    elif '<=>' in tokens:
-        return handle_implication(tokens, '<=>', lambda l, r: ['('] + ['~'] + l + ['||'] + r + [')'] + ['&&'] + ['('] + ['~'] + r + ['||'] + l + [')'])
-    else:
-        return tokens  # Base case: no implications to handle
-
-def handle_implication(tokens, operator, transform_func):
-    # Split the token list at the operator
-    op_index = tokens.index(operator)
-    left_expr = eliminate_implications(tokens[:op_index])  # Recursively handle the left side
-    right_expr = eliminate_implications(tokens[op_index + 1:])  # Recursively handle the right side
-
-    # Transform the expression around the operator
-    return transform_func(left_expr, right_expr)
-
-
-def move_negation_inwards(tokens):
+   
+def create_sympy_expr(tokens):
+    """
+    Convert a list of tokens into a SymPy expression.
+    tokens: List of strings, where operators are '||', '&', '~', '=>', '<=>'
+    and other elements are variable names.
+    """
+    # Mapping from token to SymPy function
+    op_map = {
+        '||': Or,
+        '&': And,
+        '~': Not,
+        '=>': Implies,
+        '<=>': Equivalent
+    }
+    
     stack = []
+    
+    for token in tokens:
+        if token in op_map:
+            if token == '~':  # Unary operator
+                operand = stack.pop()
+                result = op_map[token](operand)
+            else:  # Binary operators
+                right = stack.pop()
+                left = stack.pop()
+                result = op_map[token](left, right)
+            stack.append(result)
+        else:
+            stack.append(symbols(token))
 
-    i = 0
+    return stack.pop() if stack else None
 
-    while (i < len(tokens)):
-        if (tokens[i] == '~' and tokens[i+1] == '(') or tokens[i] == '(':
-            stack.append(tokens[i])
-        elif tokens[i] in ["||", "&"]:
-            if stack and stack[i-1] == '~':
-                stack.pop()
-        else:  # Append all other operators and operands
-            stack.append(tokens[i])
+def convert_to_cnf(tokens):
+    expr = create_sympy_expr(tokens)
 
-        i += 1
+    return to_cnf(expr, simplify=True)
 
+def resolve(clause1, clause2):
+    # Find complementary literals
+    for literal in clause1:
+        if -literal in clause2:  # Assuming literals are integers, negation is represented by negative numbers
+            # Create a new clause by resolving the pair
+            new_clause = (clause1 | clause2) - {literal, -literal}
+            return new_clause
+    return None
 
-def ditribute_and_over_or():
-    pass
+def resolution_solver(clauses):
+    new_clauses = set()
+    while True:
+        for clause1 in clauses:
+            for clause2 in clauses:
+                if clause1 != clause2:
+                    resolvent = resolve(clause1, clause2)
+                    if resolvent is None:
+                        continue
+                    if not resolvent:  # Empty clause means contradiction
+                        return False
+                    new_clauses.add(frozenset(resolvent))
+        if new_clauses.issubset(clauses):
+            return True  # No new clauses, original formula is satisfiable
+        clauses.update(new_clauses)
 
+# Example usage
+clauses = {frozenset([-1, -2, -3, 4])}  # Represents the CNF ~A ∨ ~B ∨ ~C ∨ D
+result = resolution_solver(clauses)
+print("Satisfiable:", result)
 
-def to_cnf(sentence):
-    tokenizer = Tokenizer(sentence.original)
-
-    tokens = tokenizer.tokenize()
-
-    tokens = eliminate_implications(tokens)
