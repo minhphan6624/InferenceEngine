@@ -1,4 +1,4 @@
 TELL
-p; q; (p => q) & (q => r); s | t
+p; q; (p => q) & (q => r); s || t
 ASK
-(r | t)
+(r || t)
