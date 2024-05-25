@@ -1,0 +1,4 @@
+TELL
+(p | q) => r; (r | s) => t; u  & v;
+ASK
+(r & ~t) || (u & v)
