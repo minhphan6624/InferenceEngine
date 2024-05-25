@@ -1,4 +1,4 @@
-from HornKB import *
+from GenericSentence import *
 from Tokenizer import *
 
 from itertools import *
@@ -26,8 +26,8 @@ def evaluate_horn_clause(clause, model={}):
     conclusion_true = model.get(clause.conclusion, False)
 
     # a => b <==> ~a v b
-    clause.display()
-    print((not premise_true) or conclusion_true)
+    # clause.display()
+    # print((not premise_true) or conclusion_true)
     return (not premise_true) or conclusion_true
 
 # Check if the KB is true in a model
@@ -68,7 +68,7 @@ def truth_table_check_hornkb(kb, query):
 
         # Check for models where KB is true)
         if evaluate_hornkb(kb, symbol_model):
-            print(symbol_model, "KB TRUE")
+            
             count += 1
             # If the query is not true in that model
             if not evaluate_fact(query, symbol_model):

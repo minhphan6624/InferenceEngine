@@ -22,7 +22,8 @@ def bc_entails(KB, query, inferred=None):
             for premise in clause.premises:
                 if not inferred[premise]:
                     # Recursively prove each premise; memoize the result
-                    if bc_entails(KB, premise, inferred):
+                    result,_  = bc_entails(KB, premise, inferred)
+                    if result:
                         inferred[premise] = True
                     else:
                         all_premises_proven = False

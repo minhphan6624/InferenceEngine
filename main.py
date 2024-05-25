@@ -6,6 +6,7 @@ from GenericKB import *
 from truth_table import *
 from forward_chaining import *
 from backward_chaining import *
+from resolution_prover import *
 
 filename = sys.argv[1]
 method = sys.argv[2]
@@ -81,6 +82,12 @@ def main():
                 print(result)
             else:
                 print(result + ":", models_count)
+        elif method == "RES":
+            test=  GenericSentence("(A & B) => (C || D)")
+            tokenizer = Tokenizer(test.original)
+            tokens = tokenizer.tokenize()
+            print(tokens)
+            print(eliminate_implications(tokens))
         else:
             print("Invalid method!")
 
