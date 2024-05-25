@@ -33,11 +33,6 @@ class GenericKB:
         for sentence in self.generic_sentences:
             symbols.update(re.findall(r'\b\w+\b', sentence.original))
 
-        # if isinstance(self.query, GenericSentence):
-        #     symbols.update(self.query.get_symbols())
-        # elif self.query in self.facts:
-        #     symbols.add(self.query)
-
         return list(symbols)
 
     # Display method for debugging purposes

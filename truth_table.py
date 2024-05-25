@@ -1,4 +1,6 @@
 from HornKB import *
+from Tokenizer import *
+
 from itertools import *
 import re
 
@@ -77,11 +79,91 @@ def truth_table_check_hornkb(kb, query):
 
 # --------------- Generic KB ---------------------
 
-# Check truth value of a generic sentence
+# Convert the list of tokens to Reverse Polish Notation (postfix)
 
 
-def evaluate_generic_sentences(sentence, model={}):
-    return sentence.evaluate(model)
+def shunting_yard(tokens):
+    # Operator precedence - operators with higher precedence are executed first
+    precedence = {'~': 3, '&': 2, '||': 2, '=>': 1, '<=>': 1}
+
+    associativity = {'~': 'right', '&': 'left',
+                     '||': 'left', '=>': 'left', '<=>': 'left'}
+    output = []  # Postfix(RPN) output queue
+    operators = []  # operator stack
+
+    for token in tokens:
+        if token.isalnum():  # token is an operand (prop symbol)
+            output.append(token)
+
+        elif token in precedence:  # If token is an operator
+            while (operators  # There are still operators on the stack...
+                   # ..and there is no left parenthesis on top...
+                   and operators[-1] != '('
+                   and operators[-1] in precedence  # ...and
+                   and (precedence[operators[-1]] > precedence[token]  # ...and the current operator has lower
+                        or (precedence[operators[-1]] == precedence[token] and associativity[token] == 'left'))
+                   ):
+                output.append(operators.pop())
+            operators.append(token)
+
+        # Parenthesis handling
+        elif token == '(':
+            # Always push the opening parenthesis on to the stack
+            operators.append(token)
+
+        elif token == ')':
+            while operators and operators[-1] != '(':
+                output.append(operators.pop())
+            operators.pop()
+
+    # After all tokens are parsed, flush the remaining operators on the stack onto the output queue
+    while operators:
+        output.append(operators.pop())
+    return output
+
+# Evaluate an expression in RPN (Postfix representation)
+
+
+def evaluate_rpn(expression, model):
+    stack = []
+    for token in expression:
+        if token.isalnum():  # operand
+            # Retrieve the boolean value from the model
+            stack.append(model.get(token, False))
+        else:  # operator
+            if token == '~':
+                operand = stack.pop()
+                stack.append(not operand)
+            else:
+                right = stack.pop()
+                left = stack.pop()
+                if token == '&':
+                    stack.append(left and right)
+                elif token == '||':
+                    stack.append(left or right)
+                elif token == '=>':
+                    stack.append(not left or right)
+                elif token == '<=>':
+                    stack.append(left == right)
+
+    return stack.pop()
+
+
+def evaluate_generic_sentence(sentence, model={}):
+    # Initialize a tokenizer for the sentence
+    tokenizer = Tokenizer(sentence.original)
+
+    # Get the list of tokens of the sentence
+    tokens = tokenizer.tokenize()
+    print(tokens)
+
+    # Convert tokens into RPN
+    rpn = shunting_yard(tokens)
+
+    result = evaluate_rpn(rpn, model)
+
+    return result
+
 
 # Check truth value of a generic KB
 
@@ -92,16 +174,7 @@ def evaluate_generic_kb(kb, model={}):
             return False
 
     for sentence in kb.generic_sentences:
-
-        tokenizer = Tokenizer(sentence.original)
-        tokens = tokenizer.tokenize()
-        rpn = shunting_yard(tokens)
-
-        # print(rpn)
-
-        # print(evaluate_rpn(rpn, model))
-
-        if not evaluate_rpn(rpn, model):
+        if not evaluate_generic_sentence(sentence, model):
             return False
 
     return True
@@ -132,10 +205,7 @@ def truth_table_check_generickb(kb, query):
             count += 1
             # Check if the query is also true
             if isinstance(query, GenericSentence):
-                query_tokenizer = Tokenizer(query.original)
-                tokens = query_tokenizer.tokenize()
-                rpn = shunting_yard(tokens)
-                if not evaluate_rpn(rpn, symbol_model):
+                if not evaluate_generic_sentence(query, symbol_model):
                     entailed = False
             else:
                 if not evaluate_fact(query, symbol_model):
