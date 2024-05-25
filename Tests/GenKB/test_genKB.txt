@@ -1,4 +1,4 @@
 TELL
-(a & b) => c;(d || e) => ~f;g => (h & i)
+(a <=> (c => ~d)) & b & (b => a); c; ~f || g;
 ASK
-(c & ~f) || (g & h & i)
+d
