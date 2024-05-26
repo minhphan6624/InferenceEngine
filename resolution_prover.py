@@ -36,7 +36,7 @@ def create_sympy_expr(tokens):
 
     return stack.pop() if stack else None
 
-# Convert a list of tokens in RPN to SymPy cnf
+# Convert a list of tokens in RPN to Sympy cnf
 
 
 def convert_to_cnf(tokens):
@@ -44,7 +44,9 @@ def convert_to_cnf(tokens):
 
     return to_cnf(expr, simplify=True)
 
-# Parse a SymPy cnf expression to get the clauses
+# ------------------ Parsing a sympy CNF expression ----------------------
+
+# Parse a SymPy CNF expression to get the clauses
 
 
 def parse_cnf(cnf_expression):
@@ -52,8 +54,6 @@ def parse_cnf(cnf_expression):
         return [frozenset(parse_clause(c)) for c in cnf_expression.args]
     else:
         return [frozenset(parse_clause(cnf_expression))]
-
-# FInd the literals in a clause
 
 
 def parse_clause(clause):
@@ -69,6 +69,8 @@ def parse_literal(literal):
     else:
         return str(literal)
 
+
+# -------------- Resolution prover ------------------
 
 # Resolve a list of clauses
 def resolve(clauses):
@@ -114,23 +116,24 @@ def resolution_prover(cnf_expression):
 
 def res_entails(kb, query):
 
-    # Assume kb and query are lists of expressions already in your system
     cnf_kb = And(*[convert_to_cnf(sentence.to_rpn())
                  for sentence in kb.generic_sentences])
 
+    cnf_kb = to_cnf(cnf_kb)
+
     print(cnf_kb)
 
-    cnf_query = convert_to_cnf(query.to_rpn())
-    negated_cnf_query = to_cnf(Not(cnf_query), simplify=True)
+    # cnf_query = convert_to_cnf(query.to_rpn())
+    # negated_cnf_query = to_cnf(Not(cnf_query), simplify=True)
 
-    print(negated_cnf_query)
+    # print(negated_cnf_query)
 
-    # Combine the CNF of the KB and the negated query
-    combined_cnf = And(cnf_kb, negated_cnf_query)
+    # # Combine the CNF of the KB and the negated query
+    # combined_cnf = And(cnf_kb, negated_cnf_query)
 
-    print(combined_cnf)
+    # print(combined_cnf)
 
-    # Use your resolution solver
-    result = resolution_prover(combined_cnf)
+    # # Use your resolution solver
+    # result = resolution_prover(combined_cnf)
 
-    return result == "Unsatisfiable"  # If unsatisfiable, KB entails the query
+    # return result == "Unsatisfiable"  # If unsatisfiable, KB entails the query
