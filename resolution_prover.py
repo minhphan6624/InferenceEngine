@@ -3,13 +3,13 @@ from sympy import symbols, Or, And, Not, Implies, Equivalent, to_cnf
 from Tokenizer import *
 from GenericSentence import *
 
-
+"""
+Convert a list of tokens in RPN into a SymPy expression.
+tokens: List of strings, where operators are '||', '&', '~', '=>', '<=>'
+and other elements are variable names.
+"""
 def create_sympy_expr(tokens):
-    """
-    Convert a list of tokens in RPN into a SymPy expression.
-    tokens: List of strings, where operators are '||', '&', '~', '=>', '<=>'
-    and other elements are variable names.
-    """
+   
     # Mapping from token to SymPy function
     op_map = {
         '||': Or,
@@ -36,7 +36,7 @@ def create_sympy_expr(tokens):
 
     return stack.pop() if stack else None
 
-# Convert a list of tokens in RPN to Sympy cnf
+# Convert a list of tokens in RPN to Sympy CNF
 
 
 def convert_to_cnf(tokens):
@@ -113,27 +113,15 @@ def resolution_prover(cnf_expression):
             return "Satisfiable"
         clauses.update(new_clauses_set)  # Properly updating the set
 
-
+# ------------------ Main Function --------------------
 def res_entails(kb, query):
 
-    cnf_kb = And(*[convert_to_cnf(sentence.to_rpn())
-                 for sentence in kb.generic_sentences])
+    kb.display()
 
-    cnf_kb = to_cnf(cnf_kb)
+    for sentence in kb.generic_sentences:
+        print(sentence.to_rpn())
 
-    print(cnf_kb)
+        sent_rpn_tokens = sentence.to_rpn()
 
-    # cnf_query = convert_to_cnf(query.to_rpn())
-    # negated_cnf_query = to_cnf(Not(cnf_query), simplify=True)
+        print(convert_to_cnf(sent_rpn_tokens))
 
-    # print(negated_cnf_query)
-
-    # # Combine the CNF of the KB and the negated query
-    # combined_cnf = And(cnf_kb, negated_cnf_query)
-
-    # print(combined_cnf)
-
-    # # Use your resolution solver
-    # result = resolution_prover(combined_cnf)
-
-    # return result == "Unsatisfiable"  # If unsatisfiable, KB entails the query

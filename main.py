@@ -32,6 +32,9 @@ def parse_input_file(input):
             is_horn = False
             break
 
+    if re.search(generic_operator_pattern, query) and not re.match(horn_clause_pattern, query):
+         is_horn = False
+
     if is_horn:
         kb = HornKB()
     else:
@@ -49,7 +52,7 @@ def main():
     # Parse input to KB
     kb = parse_input_file(input_str)
 
-    # kb.display()
+    kb.display()
 
     if isinstance(kb, HornKB):
         if method == "FC":
