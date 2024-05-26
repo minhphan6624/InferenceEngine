@@ -17,12 +17,7 @@ class GenericKB:
                 else:
                     self.facts.append(sentence)
 
-        # Handle query parsing
-        if re.fullmatch(r'[a-z]', query):
-            self.query = query  # Return as a simple symbol
-        else:
-            # Otherwise, treat it as a generic sentence
-            self.query = GenericSentence(query)
+        self.query = GenericSentence(query)
 
     # Get all the propositional symbols
 

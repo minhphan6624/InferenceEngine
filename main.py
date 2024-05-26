@@ -83,15 +83,9 @@ def main():
             else:
                 print(result + ":", models_count)
         elif method == "RES":
-            test=  GenericSentence(" (A & B) => (C => D) ")
-            tokenizer = Tokenizer(test.original)
-            tokens = tokenizer.tokenize()
-            for token in tokens:
-                print(token, end=" ")
-            print()
-            rpn = shunting_yard(tokens)
-            print(convert_to_cnf(rpn))
-            print(type(convert_to_cnf(rpn)))
+            result = res_entails(kb, kb.query)
+            print(result)
+
         else:
             print("Invalid method!")
 
