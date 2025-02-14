@@ -16,4 +16,4 @@ python main.py tests/HornKB/test_HornKB.txt TT
 
 For those with a MacOS machine, the process is quite similar to the one above, except that you are going to use the terminal.
 
-(to be updated...)
+For more details, refer to [this documentation](https://drive.google.com/file/d/1mYt-z7bOb1UDf5GzNgSW-ldUkjMmjhjJ/view?usp=sharing)
